@@ -24,8 +24,7 @@ import {
   PlusCircle,
   X,
   CheckCircle,
-  Twitter,
-  MessageSquare
+  Twitter
 } from 'lucide-react';
 
 interface FxAuthor {
@@ -295,7 +294,7 @@ export default function HomePage() {
     };
   }, [obtenerFocos]);
 
-  // Consulta real a la Status Fetch API de FxEmbed (api.fxtwitter.com)
+  // Consulta a la Status Fetch API de FxEmbed
   const procesarTweetUrl = async () => {
     if (!tweetUrlInput.trim()) return;
     setCargandoTweet(true);
@@ -304,16 +303,15 @@ export default function HomePage() {
 
     const parsed = parsearTweetUrl(tweetUrlInput);
     if (!parsed) {
-      setErrorTweet('URL de tweet inválida. Debe ser https://x.com/usuario/status/id');
+      setErrorTweet('URL no válida. Debe ser en formato: https://x.com/usuario/status/123456');
       setCargandoTweet(false);
       return;
     }
 
     try {
-      // Llamada directa a api.fxtwitter.com (con soporte CORS habilitado)
       const res = await fetch(`https://api.fxtwitter.com/${parsed.username}/status/${parsed.id}`);
       if (!res.ok) {
-        throw new Error('No se pudo encontrar el tweet o la cuenta es privada');
+        throw new Error('No se pudo encontrar el post o la cuenta es privada');
       }
 
       const data = await res.json();
@@ -370,7 +368,7 @@ export default function HomePage() {
     }
   };
 
-  // Métricas en cifras
+  // Métricas
   const metricas = useMemo(() => {
     const totalFocos = focos.length;
     const totalReportes = focos.reduce((acc, f) => acc + (f.volumen_reportes || 0), 0);
@@ -462,7 +460,7 @@ export default function HomePage() {
             </h1>
           </div>
           <p className="text-sm text-slate-400 mt-1 max-w-2xl">
-            Monitoreo en tiempo real de incidentes ciudadanos, fallas de servicios y cobertura que impacta a Venezuela y a venezolanos en el exterior.
+            Monitoreo en tiempo real de incidentes ciudadanos, fallas de servicios y hechos que impactan a Venezuela y a venezolanos en el exterior.
           </p>
         </div>
 
@@ -505,11 +503,10 @@ export default function HomePage() {
               Pega el enlace de un post de X / Twitter de una fuente verificada para extraer el texto real, autor y métricas sin inventar datos.
             </p>
 
-            {/* Input URL */}
             <div className="flex gap-2 mb-4">
               <input
                 type="url"
-                placeholder="https://x.com/ReporteYa/status/18451..."
+                placeholder="https://x.com/ReporteYa/status/..."
                 value={tweetUrlInput}
                 onChange={(e) => setTweetUrlInput(e.target.value)}
                 className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -530,7 +527,6 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Previsualización del Tweet real */}
             {tweetObtenido && (
               <form onSubmit={guardarFocoEnSupabase} className="space-y-4 pt-2 border-t border-slate-800">
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
@@ -545,7 +541,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Formulario de confirmación */}
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">Titular del Foco</label>
                   <input
